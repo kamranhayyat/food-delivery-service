@@ -1,25 +1,15 @@
 <?php
 
-
 use App\Models\User;
 use Database\Seeders\AdminSeeder;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\DB;
-use PHPUnit\Framework\TestCase;
 
-class AdminSeederTest extends TestCase
-{
-    use RefreshDatabase;
-    /**
-     * A basic test example.
-     */
-    public function test_if_admin_seeder_inserted_db_row(): void
-    {
-        $adminSeeder = new AdminSeeder();
-        $adminSeeder->run();
-
-        dd(User::where("name", "ADMIN"));
-        dd(DB::table("users")->get());
-        $this->assertTrue(true);
-    }
-}
+it('check if admin seeder was run', function () {
+    $this->assertDatabaseCount(User::class, 0);
+    $this->seed(AdminSeeder::class);
+    $this->assertDatabaseCount(User::class, 1);
+    $this->assertDatabaseHas(User::class, [
+        'email' => 'ADMIN@test.com'
+    ]);
+    $user = User::first();
+    $this->assertTrue($user->isAdmin());
+});
