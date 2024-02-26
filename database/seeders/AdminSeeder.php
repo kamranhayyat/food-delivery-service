@@ -14,12 +14,13 @@ class AdminSeeder extends Seeder
      */
     public function run(): void
     {
-        $adminRole = Role::create(['name' => 'ADMIN']);
+        $adminRole = Role::query()->where('name', 'ADMIN')->get();
 
-        $adminUser = User::create([
+        $adminUser = User::query()->create([
             'name' => 'ADMIN',
             'email' => 'ADMIN@test.com',
-            'password' => Hash::make('admin123')
+            'password' => Hash::make('admin123'),
+            'phone' => '03135028148'
         ]);
 
         $adminUser->roles()->sync($adminRole);
