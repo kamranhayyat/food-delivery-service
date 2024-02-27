@@ -16,11 +16,11 @@ return new class extends Migration
             $table->id();
             $table->foreignIdFor(User::class)->constrained();
             $table->string('name')->nullable(false);
-            $table->string('moto');
-            $table->string('street');
-            $table->string('city');
-            $table->string('country');
-            $table->string('line address 1');
+            $table->string('moto')->nullable(false);
+            $table->string('street')->nullable(false);
+            $table->string('city')->nullable(false);
+            $table->string('country')->nullable(false);
+            $table->string('line address 1')->nullable(false);
             $table->string('line address 2');
             $table->string('deal_description')->comment('azadi deal');
             $table->string('deal_operator')->comment('=, % etc');
