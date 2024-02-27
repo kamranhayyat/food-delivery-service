@@ -13,12 +13,17 @@ test('user entered invalid fields', function () {
 
 test('admin can login', function () {
     $this->seed(AdminSeeder::class);
-    $response = $this->postJson('/api/login', [
+    $loginPayload = [
         'email' => 'ADMIN@test.com',
         'password' => 'admin123'
-    ]);
+    ];
+    $response = $this->postJson('/api/login', $loginPayload);
     $response->assertOk();
-    $response->assertJson(fn(AssertableJson $json) => $json->has('data.token')->where('message', 'User logged in successfully!'));
+    $response->assertJson(
+        fn(AssertableJson $json) => $json->has('data.token')
+            ->has('data.user', fn(AssertableJson $json) => $json->where('email', $loginPayload['email'])->etc())
+            ->where('message', 'User logged in successfully!')
+    );
 });
 
 test('admin tries to login with invalid', function () {

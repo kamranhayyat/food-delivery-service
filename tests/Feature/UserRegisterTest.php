@@ -18,7 +18,7 @@ it('user tries to register with invalid request', function () {
         'phone' => '0313502814'
     ]);
     $response->assertStatus(422);
-});
+})->withD;
 
 it('user tries to register with valid request', function () {
     $response = $this->postJson('/api/register', [
