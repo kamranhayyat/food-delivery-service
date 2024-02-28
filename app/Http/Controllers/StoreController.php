@@ -2,17 +2,20 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\DefaultStorePassword;
 use App\Models\Store;
+use App\Models\User;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\Rules\Password;
 
 class StoreController extends Controller
 {
-    public function registerStore(Request $request)
+    public function registerStore(Request $request): JsonResponse
     {
-        $passwordRules = Password::min(8)->symbols();
-
-        $validatedRequest = $request->validate([
+        $request->validate([
             'name' => 'required|string|max:50',
             'email' => 'email|required',
             'phone' => 'required|digits:11',
@@ -23,6 +26,19 @@ class StoreController extends Controller
             'line address 1' => 'required|string|max:150',
         ]);
 
-        $store = Store::query()->create($validatedRequest);
+        $userPayload = $request->only(['name', 'email', 'phone']);
+        $userPayload['password'] = Hash::make('default123@');
+
+        $user = User::query()->create($userPayload);
+        $store = $user->store()->create($request->only(['name', 'moto']));
+        Mail::to($user->email)->send(new DefaultStorePassword($userPayload['password']));
+
+        return response()->json([
+            'data' => [
+                'user' => $user,
+                'store' => $store
+            ],
+            'message' => 'Store registered successfully'
+        ]);
     }
 }

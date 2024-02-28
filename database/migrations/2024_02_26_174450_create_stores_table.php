@@ -17,14 +17,9 @@ return new class extends Migration
             $table->foreignIdFor(User::class)->constrained();
             $table->string('name')->nullable(false);
             $table->string('moto')->nullable(false);
-            $table->string('street')->nullable(false);
-            $table->string('city')->nullable(false);
-            $table->string('country')->nullable(false);
-            $table->string('line address 1')->nullable(false);
-            $table->string('line address 2');
-            $table->string('deal_description')->comment('azadi deal');
-            $table->string('deal_operator')->comment('=, % etc');
-            $table->integer('deal_value')->comment('10');
+            $table->string('deal_description')->comment('azadi deal')->nullable();
+            $table->string('deal_operator')->comment('=, % etc')->nullable();
+            $table->integer('deal_value')->comment('10')->nullable();
             $table->timestamps();
         });
     }
