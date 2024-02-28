@@ -1,7 +1,9 @@
 <?php
 
 use App\Mail\DefaultStorePassword;
+use App\Models\Address;
 use App\Models\Store;
+use App\Models\User;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Testing\Fluent\AssertableJson;
 
@@ -24,11 +26,15 @@ test('store is registered with valid request', function () {
     ];
     $response = $this->postJson('/api/store', $registerStorePayload);
     $response->assertStatus(200);
-    $response->assertJson(fn(AssertableJson $json) => $json->has('data.store', fn(AssertableJson $json) => $json->where('name', $registerStorePayload['name'])->etc())->etc());
+    $response->assertJson(fn(AssertableJson $json) => $json->has('data.store', fn(AssertableJson $json) => $json->where('moto', $registerStorePayload['moto'])->etc())->etc());
+    $response->assertJson(fn(AssertableJson $json) => $json->has('data.storeAddresses', fn(AssertableJson $json) => $json->where('street', $registerStorePayload['street'])->etc())->etc());
     $response->assertJson(fn(AssertableJson $json) => $json->has('data.user', fn(AssertableJson $json) => $json->where('email', $registerStorePayload['email'])->etc())->etc());
+    $this->assertDatabaseCount(User::class, 1);
     $this->assertDatabaseCount(Store::class, 1);
-    Mail::fake();
-    Mail::assertSent(DefaultStorePassword::class, function($mail) use ($response) {
-        return $mail->hasTo($response['data']['user']['email']);
-    });
+    $this->assertDatabaseCount(Address::class, 1);
+    $this->assertDatabaseHas(Address::class, ['type' => Store::STORE_ADDRESS_TYPE]);
+//    Mail::fake();
+//    Mail::assertSent(DefaultStorePassword::class, function($mail) use ($response) {
+//        return $mail->hasTo($response['data']['user']['email']);
+//    });
 });

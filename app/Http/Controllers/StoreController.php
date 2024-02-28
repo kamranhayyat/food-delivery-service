@@ -29,13 +29,19 @@ class StoreController extends Controller
         $userPayload = $request->only(['name', 'email', 'phone']);
         $userPayload['password'] = Hash::make('default123@');
 
+        $addressPayload = $request->only(['street', 'city', 'country', 'line address 1']);
+        $addressPayload['type'] = Store::STORE_ADDRESS_TYPE;
+
         $user = User::query()->create($userPayload);
-        $store = $user->store()->create($request->only(['name', 'moto']));
         Mail::to($user->email)->send(new DefaultStorePassword($userPayload['password']));
+
+        $store = $user->store()->create($request->only(['moto']));
+        $storeAddresses = $store->addresses()->create($addressPayload);
 
         return response()->json([
             'data' => [
                 'user' => $user,
+                'storeAddresses' => $storeAddresses,
                 'store' => $store
             ],
             'message' => 'Store registered successfully'

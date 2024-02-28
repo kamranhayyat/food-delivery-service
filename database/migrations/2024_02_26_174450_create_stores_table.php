@@ -15,7 +15,6 @@ return new class extends Migration
         Schema::create('stores', function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(User::class)->constrained();
-            $table->string('name')->nullable(false);
             $table->string('moto')->nullable(false);
             $table->string('deal_description')->comment('azadi deal')->nullable();
             $table->string('deal_operator')->comment('=, % etc')->nullable();

@@ -12,6 +12,8 @@ class Store extends Model
 {
     use HasFactory;
 
+    public const STORE_ADDRESS_TYPE = 'store_address';
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
