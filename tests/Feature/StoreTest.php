@@ -14,6 +14,8 @@ test('store is registered with empty request', function () {
 });
 
 test('store is registered with valid request', function () {
+    Mail::fake();
+
     $registerStorePayload = [
         'name' => 'test store name',
         'email' => 'user@test.com',
@@ -33,8 +35,7 @@ test('store is registered with valid request', function () {
     $this->assertDatabaseCount(Store::class, 1);
     $this->assertDatabaseCount(Address::class, 1);
     $this->assertDatabaseHas(Address::class, ['type' => Store::STORE_ADDRESS_TYPE]);
-//    Mail::fake();
-//    Mail::assertSent(DefaultStorePassword::class, function($mail) use ($response) {
-//        return $mail->hasTo($response['data']['user']['email']);
-//    });
+    Mail::assertSent(DefaultStorePassword::class, function($mail) use ($registerStorePayload) {
+        return $mail->hasTo($registerStorePayload['email']);
+    });
 });

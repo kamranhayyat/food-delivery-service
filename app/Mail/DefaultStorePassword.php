@@ -13,40 +13,12 @@ class DefaultStorePassword extends Mailable
 {
     use Queueable, SerializesModels;
 
-
-    /**
-     * Create a new message instance.
-     */
     public function __construct(public String $password)
-    {}
-
-    /**
-     * Get the message envelope.
-     */
-    public function envelope(): Envelope
     {
-        return new Envelope(
-            subject: 'Default Store Password',
-        );
     }
 
-    /**
-     * Get the message content definition.
-     */
-    public function content(): Content
+    public function build(): self
     {
-        return new Content(
-            view: 'emails.welcome',
-        );
-    }
-
-    /**
-     * Get the attachments for the message.
-     *
-     * @return array<int, \Illuminate\Mail\Mailables\Attachment>
-     */
-    public function attachments(): array
-    {
-        return [];
+        return $this->view('emails.welcome_user');
     }
 }
