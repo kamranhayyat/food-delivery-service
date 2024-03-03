@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('deal_description')->comment('azadi deal')->nullable();
             $table->string('deal_operator')->comment('=, % etc')->nullable();
             $table->integer('deal_value')->comment('10')->nullable();
+            $table->tinyInteger('status')->comment('Status => 0 -> Pending, 1 -> Approved')->nullable();
             $table->timestamps();
         });
     }

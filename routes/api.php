@@ -18,4 +18,5 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::post('/register', [AuthController::class, 'register']);
 
 // store resource routes
-Route::post('/store', [StoreController::class, 'registerStore']);
+Route::post('/stores', [StoreController::class, 'registerStore']);
+Route::post('/stores/process', [StoreController::class, 'processStoreRequest']);
