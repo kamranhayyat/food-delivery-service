@@ -1,46 +1,44 @@
 <?php
 
-use App\Mail\DefaultStorePassword;
-use App\Models\Address;
 use App\Models\Store;
 use App\Models\User;
-use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Testing\Fluent\AssertableJson;
 
+function loginUser($context)
+{
+    $user = User::factory()->create(['password' => Hash::make('admin123')]);
+    $response = $context->postJson('/api/login', [
+        'email' => $user->email,
+        'password' => 'admin123'
+    ]);
+
+    return $user;
+}
+
 it('store is registered with empty request', function () {
+    loginUser($this);
+
     $response = $this->postJson('/api/stores');
     $response->assertStatus(422);
-    $response->assertJsonValidationErrors(['name', 'email', 'password', 'phone', 'moto']);
+    $response->assertJsonValidationErrors(['moto']);
 });
 
 it('store is registered with valid request', function () {
-    Mail::fake();
+    loginUser($this);
 
     $registerStorePayload = [
-        'name' => 'test store name',
-        'email' => 'user@test.com',
-        'phone' => '03135028148',
-        'moto' => 'We wont stop until we have fed all of you lot!',
-        'street' => 'street no 07',
-        'city' => 'RWP',
-        'country' => 'PK',
-        'line address 1' => 'street no 07 faizabad, rawalpindi'
+        'moto' => 'We wont stop until we have fed all of you lot!'
     ];
-    $response = $this->postJson('/api/stores', $registerStorePayload);
+    $response = $this->postJson('/api/stores', $registerStorePayload)->dump();
     $response->assertStatus(200);
     $response->assertJson(fn(AssertableJson $json) => $json->has('data.store', fn(AssertableJson $json) => $json->where('moto', $registerStorePayload['moto'])->etc())->etc());
-    $response->assertJson(fn(AssertableJson $json) => $json->has('data.storeAddresses', fn(AssertableJson $json) => $json->where('street', $registerStorePayload['street'])->etc())->etc());
-    $response->assertJson(fn(AssertableJson $json) => $json->has('data.user', fn(AssertableJson $json) => $json->where('email', $registerStorePayload['email'])->etc())->etc());
-    $this->assertDatabaseCount(User::class, 1);
     $this->assertDatabaseCount(Store::class, 1);
-    $this->assertDatabaseCount(Address::class, 1);
-    $this->assertDatabaseHas(Address::class, ['type' => Store::STORE_ADDRESS_TYPE]);
-    Mail::assertSent(DefaultStorePassword::class, function($mail) use ($registerStorePayload) {
-        return $mail->hasTo($registerStorePayload['email']);
-    });
 });
 
 it('store process request with invalid request', function () {
+    loginUser($this);
+
     $response = $this->postJson('/api/stores/process');
     $response->assertStatus(422);
     $response->assertJsonValidationErrors(['storeId', 'status']);
