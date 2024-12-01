@@ -27,7 +27,7 @@ class StoreController extends Controller
             ]);
 
             $user = Auth::user();
-            $store = $user->store()->create($request->only(['moto']));
+            $store = $user->store()->create((array )$request);
 
             if ($request->hasFile('cover_picture')) {
                 $response = Http::post(route('file-upload'), [
