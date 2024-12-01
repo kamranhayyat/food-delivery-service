@@ -18,6 +18,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/stores', [StoreController::class, 'registerStore']);
     Route::post('/stores/process', [StoreController::class, 'processStoreRequest']);
 
+    //file upload routes
+    Route::post('/file-upload', [\App\Http\Controllers\FileUploadController::class, 'fileUpload']);
+
     Route::delete('/logout', [AuthController::class, 'logout']);
 });
 

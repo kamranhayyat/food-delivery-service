@@ -43,7 +43,7 @@ class AuthController extends Controller
         $passwordRules = Password::min(8)->symbols();
 
         $request = $request->validate([
-            'email' => 'email|required',
+            'email' => 'email|required|unique:users,email',
             'name' => 'required',
             'password' => ['required', 'confirmed', $passwordRules],
             'phone' => 'required|digits:11',

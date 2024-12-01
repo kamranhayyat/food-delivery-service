@@ -31,4 +31,10 @@ class Store extends Model
     {
         return $this->morphMany(Address::class, 'addressable');
     }
+
+    public function coverPicture(): MorphMany
+    {
+        return $this->morphMany(File::class, 'fileable')->where('file_type', 'cover_picture');
+    }
+
 }
